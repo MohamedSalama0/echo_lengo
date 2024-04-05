@@ -3,8 +3,9 @@ import 'package:learning_letters_easy/presentation/shared_widgets/static_letters
 import 'package:video_player/video_player.dart';
 
 class ContentScreen extends StatefulWidget {
-  const ContentScreen({super.key, this.isEnglish = true});
+  const ContentScreen({super.key, this.isEnglish = true, required this.index});
   final bool isEnglish;
+  final int index;
 
   @override
   State<ContentScreen> createState() => _ContentScreenState();
@@ -28,12 +29,11 @@ class _ContentScreenState extends State<ContentScreen> {
         paths.add('$enVidPath/$letter.mp4');
       }
     }
-    for (int letter =1; letter<=28; letter++) {
+    for (int letter = 1; letter <= 28; letter++) {
       paths.add('$arVidPath/ar$letter.mp4');
     }
     return paths;
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -47,57 +47,47 @@ class _ContentScreenState extends State<ContentScreen> {
             },
             child: const Icon(Icons.arrow_back_rounded, color: Colors.white)),
       ),
-      body: PageView(
-        controller: _pageController,
-        physics: const BouncingScrollPhysics(),
-        scrollDirection: Axis.vertical,
+      body: Stack(
+        alignment: AlignmentDirectional.center,
+        // mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          ...List.generate(
-            paths.length,
-            (i) => Stack(
-              alignment: AlignmentDirectional.center,
-              // mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                VideoSection(vid: paths[i]),
-                Padding(
-                  padding: const EdgeInsetsDirectional.only(
-                    start: 12,
-                    bottom: 25,
-                    end: 12,
-                  ),
-                  child: Align(
-                    alignment: widget.isEnglish
-                        ? AlignmentDirectional.centerStart
-                        : AlignmentDirectional.centerEnd,
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.end,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          widget.isEnglish
-                              ? 'English Alpha${i + 1}'
-                              : 'حرف رقم${i + 1}',
-                          textAlign: TextAlign.start,
-                          style: const TextStyle(
-                            fontSize: 18,
-                            color: Colors.white,
-                          ),
-                        ),
-                        Text(
-                          widget.isEnglish
-                              ? 'English Lesson no*${i + 1}'
-                              : 'درس رقم ${i + 1}',
-                          textAlign: TextAlign.start,
-                          style: const TextStyle(
-                            fontSize: 18,
-                            color: Colors.white,
-                          ),
-                        ),
-                      ],
+          VideoSection(vid: paths[widget.index]),
+          Padding(
+            padding: const EdgeInsetsDirectional.only(
+              start: 12,
+              bottom: 25,
+              end: 12,
+            ),
+            child: Align(
+              alignment: widget.isEnglish
+                  ? AlignmentDirectional.centerStart
+                  : AlignmentDirectional.centerEnd,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.end,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    widget.isEnglish
+                        ? 'English Alpha${widget.index + 1}'
+                        : 'حرف رقم${widget.index + 1}',
+                    textAlign: TextAlign.start,
+                    style: const TextStyle(
+                      fontSize: 18,
+                      color: Colors.white,
                     ),
                   ),
-                )
-              ],
+                  Text(
+                    widget.isEnglish
+                        ? 'English Lesson no*${widget.index + 1}'
+                        : 'درس رقم ${widget.index + 1}',
+                    textAlign: TextAlign.start,
+                    style: const TextStyle(
+                      fontSize: 18,
+                      color: Colors.white,
+                    ),
+                  ),
+                ],
+              ),
             ),
           )
         ],

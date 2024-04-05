@@ -1,7 +1,5 @@
 import 'dart:math';
-
 import 'package:flutter/material.dart';
-import 'package:learning_letters_easy/presentation/screens/content/view/content_screen.dart';
 import 'package:learning_letters_easy/presentation/shared_widgets/static_letters.dart';
 
 class QuestionsScreen extends StatefulWidget {
@@ -44,6 +42,11 @@ class _QuestionsScreenState extends State<QuestionsScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        title: const Text(
+          'الأسئلة',
+          style: TextStyle(color: Colors.white),
+        ),
+        centerTitle: true,
         backgroundColor: Colors.transparent,
         leading: InkWell(
             onTap: () {
@@ -133,20 +136,19 @@ class _RadioButtonWidgetState extends State<RadioButtonWidget> {
 
       correctAnswer = options[correctIndex];
     } else {
-     var alphabetsAr = List<String>.from(lettersArabic);
+      var alphabetsAr = List<String>.from(lettersArabic);
 
-    alphabetsAr.removeAt(widget.index);
-    alphabetsAr.shuffle();
-    int correctIndex = Random().nextInt(3);
-    alphabetsAr.insert(
-        correctIndex, lettersArabic[widget.index]);
+      alphabetsAr.removeAt(widget.index);
+      alphabetsAr.shuffle();
+      int correctIndex = Random().nextInt(3);
+      alphabetsAr.insert(correctIndex, lettersArabic[widget.index]);
 
-    options = alphabetsAr.sublist(0, 3);
+      options = alphabetsAr.sublist(0, 3);
 
-    correctAnswer = lettersArabic[widget.index];
+      correctAnswer = lettersArabic[widget.index];
 
-    // Shuffle options again to ensure the correct answer is randomly placed
-    options.shuffle();
+      // Shuffle options again to ensure the correct answer is randomly placed
+      options.shuffle();
     }
   }
 

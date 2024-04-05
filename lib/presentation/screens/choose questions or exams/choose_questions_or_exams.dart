@@ -1,10 +1,17 @@
 import 'package:flutter/material.dart';
-import 'package:learning_letters_easy/presentation/screens/alphabet_details/view/alphabet_options_screen.dart';
+import 'package:learning_letters_easy/presentation/screens/exams/exams_screen.dart';
+import 'package:learning_letters_easy/presentation/screens/letters/letters_screen.dart';
+import 'package:learning_letters_easy/presentation/screens/questions/view/questions_screen.dart';
 import 'package:learning_letters_easy/presentation/shared_widgets/custom_button.dart';
 import 'package:learning_letters_easy/utils/app_style.dart';
 
-class AlphabetsScreen extends StatelessWidget {
-  const AlphabetsScreen({super.key});
+class ChooseQuestionsOrExamsScreen extends StatelessWidget {
+  final bool comingFormContentScreen;
+  final bool isEnglish;
+  const ChooseQuestionsOrExamsScreen(
+      {super.key,
+      required this.comingFormContentScreen,
+      required this.isEnglish});
 
   @override
   Widget build(BuildContext context) {
@@ -18,15 +25,14 @@ class AlphabetsScreen extends StatelessWidget {
           children: [
             CustomButton(
               onTap: () {
-
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => const AlphabetOptionsScreen(isEnglish: false),
-                  ),
+                      builder: (context) =>
+                           QuestionsScreen(isEnglish: isEnglish)),
                 );
               },
-              text: 'اللغة العربية',
+              text: 'الأسئلة',
             ),
             SizedBox(height: sizedH(context) * 0.04),
             CustomButton(
@@ -34,11 +40,11 @@ class AlphabetsScreen extends StatelessWidget {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => const AlphabetOptionsScreen(isEnglish: true),
+                    builder: (context) => ExamsScreen(isEnglish: isEnglish),
                   ),
                 );
               },
-              text: 'English',
+              text: 'المراجعة',
             ),
           ],
         ),

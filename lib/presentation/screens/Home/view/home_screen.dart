@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:learning_letters_easy/presentation/screens/alphabets/view/alphabets_screen.dart';
+import 'package:learning_letters_easy/presentation/screens/choose%20language/view/choose_language_screen.dart';
+import 'package:learning_letters_easy/presentation/screens/questions/view/questions_screen.dart';
 import 'package:learning_letters_easy/presentation/shared_widgets/custom_button.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -11,7 +12,7 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   List<String> titleTabs = [
-    'Questions',
+    'Questions\n& Exams',
     'Content',
     'About',
     'Settings',
@@ -35,12 +36,20 @@ class _HomeScreenState extends State<HomeScreen> {
                 semanticChildCount: 2,
                 mainAxisSpacing: 20,
                 children: [
-                  tab(0, () {}),
+                  tab(0, () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) =>
+                            const ChooseLanguageScreen(comingFormContentScreen: false),
+                      ),
+                    );
+                  }),
                   tab(1, () {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => const AlphabetsScreen(),
+                        builder: (context) => const ChooseLanguageScreen(comingFormContentScreen: true),
                       ),
                     );
                   }),

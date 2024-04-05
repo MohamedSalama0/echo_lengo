@@ -10,10 +10,10 @@ dependencies:
   flick_video_player: ^0.7.0
   flutter:
     sdk: flutter
+  flutter_riverpod: ^2.5.1
   video_player: ^2.8.2
 
 dev_dependencies:
-
   flutter_launcher_icons: ^0.13.1
   flutter_lints: ^2.0.0
 
@@ -29,7 +29,7 @@ flutter:
   uses-material-design: true
 
   assets:
-     - assets/videos/en/
-     - assets/videos/ar/
-     - assets/screenshots/en/
-     - assets/screenshots/ar/
+    - assets/videos/en/
+    - assets/videos/ar/
+    - assets/screenshots/en/
+    - assets/screenshots/ar/

@@ -41,6 +41,7 @@ class CustomButton extends StatelessWidget {
                     ),
               Text(
                 text,
+                maxLines: 2,
                 style: const TextStyle(
                   color: Colors.black,
                   fontWeight: FontWeight.bold,
