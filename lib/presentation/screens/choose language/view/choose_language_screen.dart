@@ -38,12 +38,15 @@ class ChooseLanguageScreen extends StatelessWidget {
             SizedBox(height: sizedH(context) * 0.04),
             CustomButton(
               onTap: () {
-                MaterialPageRoute(
-                  builder: (context) => comingFormContentScreen
-                      ? const LettersScreen(isEnglish: false)
-                      : ChooseQuestionsOrExamsScreen(
-                          comingFormContentScreen: comingFormContentScreen,
-                          isEnglish: false),
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => comingFormContentScreen
+                        ? const LettersScreen(isEnglish: true)
+                        : ChooseQuestionsOrExamsScreen(
+                            comingFormContentScreen: comingFormContentScreen,
+                            isEnglish: true),
+                  ),
                 );
               },
               text: 'English',

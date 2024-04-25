@@ -48,8 +48,8 @@ class LettersScreen extends StatelessWidget {
                                     isEnglish: isEnglish, index: correctIndex),
                               ));
                         },
-                        height: sizedH(context) * 0.12,
-                        width: sizedW(context) * 0.12,
+                        // height: sizedH(context) * 0.12,
+                        // width: sizedW(context) * 0.12,
                         text: letters[index],
                       ),
                     );

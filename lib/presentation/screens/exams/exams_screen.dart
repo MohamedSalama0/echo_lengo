@@ -2,6 +2,7 @@ import 'dart:math';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:learning_letters_easy/presentation/screens/exams/exams_provider.dart';
@@ -9,11 +10,11 @@ import 'package:learning_letters_easy/presentation/shared_widgets/static_letters
 import 'package:learning_letters_easy/utils/app_style.dart';
 
 class Exam {
-  String answer;
-  List<String> paths = [];
+  String path = '';
+  String letter = '';
   Exam({
-    required this.answer,
-    required this.paths,
+    required this.path,
+    required this.letter,
   });
 }
 
@@ -29,7 +30,7 @@ class _ExamsScreenState extends ConsumerState<ExamsScreen> {
   final PageController _pageController = PageController();
   static const String enVidPath = 'assets/screenshots/en';
   static const String arVidPath = 'assets/screenshots/ar';
-  List<String> paths = [];
+  List<Exam> exam = [];
   Random random = Random();
   int randomNum = 0;
   List<String> randomList = [];
@@ -44,26 +45,14 @@ class _ExamsScreenState extends ConsumerState<ExamsScreen> {
   @override
   void initState() {
     super.initState();
-    paths = letters();
+    exam = letters();
     ref.read(examProvider).score = 0;
     randomNum = widget.isEnglish ? random.nextInt(10) : random.nextInt(10);
-  }
-
-  String getLetterArByIndex(index) {
-    switch (index) {
-      case 1:
-        return 'ا';
-      case 2:
-        return 'ب';
-      case 3:
-        return 'ت';
-      case 4:
-        return 'ث';
-      case 5:
-        return 'ح';
-
-
-    }
+    _pageController.addListener(() {
+      setState(() {
+        questionNumber = _pageController.page!.round() + 1;
+      });
+    });
   }
 
   List<String> getRandomLetters() {
@@ -73,32 +62,50 @@ class _ExamsScreenState extends ConsumerState<ExamsScreen> {
     return randomLetters.sublist(0, 10);
   }
 
-  List<String> letters() {
-    List<String> paths = [];
+  int getIndexByArabicLetter(String letter) {
+    if (letter.length != 1 || !lettersArabic.contains(letter)) {
+      throw Exception('Invalid Arabic letter provided');
+    }
+
+    return lettersArabic.indexOf(letter) + 1;
+  }
+
+  List<Exam> letters() {
+    List<Exam> exams = [];
     if (widget.isEnglish) {
       randomList = getRandomLetters();
       for (String letter in randomList) {
-        paths.add('$enVidPath/$letter.png');
+        exams.add(Exam(path: '$enVidPath/$letter.png', letter: letter));
       }
     } else {
       randomList = getRandomLetters();
-      for (int index = 0; index < randomList.length; index++) {
-        print(randomList.toString());
-        paths.add('$arVidPath/ar${index + 1}.png');
+
+      for (String letter in randomList) {
+        int letterIndex = getIndexByArabicLetter(letter);
+        print('letter=> $letter');
+        exams.add(
+          Exam(
+            path: '$arVidPath/ar$letterIndex.png',
+            letter: letter,
+          ),
+        );
       }
     }
-    paths.shuffle();
-    return paths;
+    exams.shuffle();
+    return exams;
   }
+
+  int questionNumber = 1;
 
   @override
   Widget build(BuildContext context) {
+    print('rebuilddd');
     return Scaffold(
       appBar: AppBar(
         toolbarHeight: 90,
-        title: const Text(
-          'المراجعة\n10/10',
-          style: TextStyle(
+        title: Text(
+          'المراجعة\n10/$questionNumber',
+          style: const TextStyle(
             color: Colors.white,
           ),
         ),
@@ -107,15 +114,17 @@ class _ExamsScreenState extends ConsumerState<ExamsScreen> {
         controller: _pageController,
         physics: const NeverScrollableScrollPhysics(),
         scrollDirection: Axis.vertical,
-        itemCount: paths.length,
+        itemCount: exam.length,
         itemBuilder: (context, index) {
           print('randomList[index]');
-          print(randomList[index]);
+          print(randomList.toString());
+          print(exam[index].letter);
+          print(exam[index].path);
           return Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Expanded(
-                child: Image.asset(paths[index]),
+                child: Image.asset(exam[index].path),
               ),
               Padding(
                 padding: const EdgeInsetsDirectional.only(
@@ -136,6 +145,7 @@ class _ExamsScreenState extends ConsumerState<ExamsScreen> {
                         isEnglish: widget.isEnglish,
                         pageController: _pageController,
                         lettersList: randomList,
+                        correctAnswer: exam[index].letter,
                       ),
                     ],
                   ),
@@ -156,10 +166,12 @@ class RadioButtonWidget extends StatefulWidget {
     required this.isEnglish,
     required this.lettersList,
     required this.pageController,
+    required this.correctAnswer,
   });
   final int index;
   final PageController pageController;
   final bool isEnglish;
+  final String correctAnswer;
   final List<String> lettersList;
   @override
   _RadioButtonWidgetState createState() => _RadioButtonWidgetState();
@@ -180,42 +192,30 @@ class _RadioButtonWidgetState extends State<RadioButtonWidget> {
 
   void generateRandomOptions() {
     if (widget.isEnglish) {
-      List<String> alphabet = List<String>.from(
-        widget.lettersList,
-      );
-      alphabet.removeAt(widget.index);
-      alphabet.shuffle();
+      List<String> alphabet = List.from(widget.lettersList);
 
-      int correctIndex = Random().nextInt(3);
-      alphabet.insert(correctIndex, widget.lettersList[widget.index]);
-
-      options = alphabet.sublist(0, 3);
-
-      correctAnswer = options[correctIndex];
-    } else {
-      var alphabetsAr = List<String>.from(widget.lettersList);
-      if (alphabetsAr.contains(widget.lettersList[widget.index])) {
-        alphabetsAr.remove(widget.lettersList[widget.index]);
+      if (alphabet.contains(widget.correctAnswer)) {
+        alphabet.remove(widget.correctAnswer);
       }
 
-// Shuffle the list of options
+      alphabet.shuffle();
+      correctAnswer = widget.correctAnswer;
+      options = alphabet.take(2).toList() ..add(correctAnswer!);
+    } else {
+      var alphabetsAr = List<String>.from(widget.lettersList);
+      print('coreect answer => ${widget.correctAnswer}');
+      if (alphabetsAr.contains(widget.correctAnswer)) {
+        alphabetsAr.remove(widget.correctAnswer);
+      }
+
+      correctAnswer = widget.correctAnswer;
+
       alphabetsAr.shuffle();
-
-// Ensure the correct answer is included in the options
-      int correctIndex =
-          Random().nextInt(3); // Generate a random index for the correct answer
-      alphabetsAr.insert(correctIndex, widget.lettersList[widget.index + 1]);
-
-// Ensure we have exactly 3 options
-      options = alphabetsAr.take(3).toList();
-      print(options.toString());
-// Shuffle options again to randomize their order
-      options.shuffle();
-
-// Set the correct answer
-      correctAnswer = widget.lettersList[widget.index + 1];
-      print(correctAnswer);
+      options = alphabetsAr.take(2).toList()..add(correctAnswer!);
+      print('options list => ${options.toString()}');
     }
+
+    options.shuffle();
   }
 
   void showScoreBottomSheet(int degree) {
